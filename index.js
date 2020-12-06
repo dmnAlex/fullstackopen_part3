@@ -4,19 +4,18 @@ const morgan = require('morgan')
 const cors = require('cors')
 const app = express()
 const Person = require('./models/mongo')
-const { request, response } = require('express')
 
-morgan.token('content', (req, res) => (
+morgan.token('content', (req) => (
     req.method === 'POST' ? JSON.stringify(req.body) : ''
 ))
 
-const requestLogger = (req, res, next) => {
-    console.log('RQ_Method:', req.method)
-    console.log('RQ_Path:  ', req.path)
-    console.log('RQ_Body:  ', req.body)
-    console.log('---')
-    next()
-}
+// const requestLogger = (req, res, next) => {
+//     console.log('RQ_Method:', req.method)
+//     console.log('RQ_Path:  ', req.path)
+//     console.log('RQ_Body:  ', req.body)
+//     console.log('---')
+//     next()
+// }
 
 app.use(express.static('build'))
 app.use(express.json())
@@ -54,7 +53,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id)
-        .then(result => {
+        .then(() => {
             response.status(204).end()
         })
         .catch(error => next(error))
@@ -111,5 +110,5 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`)
 })
